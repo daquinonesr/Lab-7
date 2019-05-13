@@ -7,7 +7,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-
+import math
 
 #code from previous lab
 
@@ -179,7 +179,7 @@ def recursive(initial,v,adj,maze):
                 #recursivecall
                 recursive(i,v,adj,maze)
 
-def breath(adj):
+def breadth(adj):
         #start with visited list empty
         v = np.zeros(len(adj),dtype = int) 
         q=[] 
@@ -203,9 +203,29 @@ def dfs_print(maze,adj):
         if i == len(adj)-1:
             break
     
+def draw_graph(G):
+    fig, ax = plt.subplots()
+    n = len(G)
+    r = 30
+    coords =[]
+    for i in range(n):
+        theta = 2*math.pi*i/n+.001 # Add small constant to avoid drawing horizontal lines, which matplotlib doesn't do very well
+        coords.append([-r*np.cos(theta),r*np.sin(theta)])
+    for i in range(n):
+        for dest in G[i]:
+            ax.plot([coords[i][0],coords[dest][0]],[coords[i][1],coords[dest][1]],
+                     linewidth=1,color='k')
+    for i in range(n):
+        ax.text(coords[i][0],coords[i][1],str(i), size=10,ha="center", va="center",
+         bbox=dict(facecolor='w',boxstyle="circle"))
+    ax.set_aspect(1.0)
+    ax.axis('off')     
+    
+    
+    
 plt.close("all") 
-maze_rows = 7
-maze_cols = 5
+maze_rows = 4
+maze_cols = 4
 walls = walls(maze_rows,maze_cols)
 S = DisjointSetForest(maze_rows*maze_cols)
 draw_maze(walls,maze_rows,maze_cols,cell_nums=True) 
@@ -213,9 +233,13 @@ adj = adjacents(walls,maze_rows,maze_cols)
 m = maze(S,walls,adj)
 adjacentlist=(adjacents(m,maze_rows,maze_cols))
 print()
-print('*Breath First*')
-breath(adjacentlist)
+print('Adjacency List')
+print(adjacentlist)
+
 print()
+print('*Breadth First*')
+breadth(adjacentlist)
+draw_graph(adjacentlist)
 print('----------------')
 print('*Depth First*')
 print('Iterative:')
